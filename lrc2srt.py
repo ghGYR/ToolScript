@@ -1,48 +1,48 @@
 #coding=utf-8
 import re
 import sys
-try:
-	f = open(sys.argv[1], 'r')
-except:
-	print("Error")
-	sys.exit()
-data = f.read()
-result = {}
-times = []
-for line in data.split('\n'):
-	match_list = re.findall('\[\d*?:\d*?\.\d*?]', line)
-	if match_list:
+
+
+def readlrc(infile):
+	data = infile.read()
+	llrc = {}
+	for line in data.split('\n'):
+		match_list = re.findall('\[(\d*?:\d*?\.\d*?)]', line)
 		for m in match_list:
-
-			tmp = result.get(m)
-			if tmp:
-				# lrc
-				result[m] = tmp + "\n" + line[len(line)-line[::-1].index(']'):]
-				# result[m] = tmp + "\n" + line[len(line)-line[::-1].index(']'):]
+			m.replace(".",",")
+			if len(m.split(":"))<3:
+				m="00:"+m
+			string=line[len(line)-line[::-1].index(']'):]
+			if llrc.get(m):
+				llrc[m]+= "\\N" + string
 			else:
-				result[m] = line[len(line)-line[::-1].index(']'):]
-				times.append(m)
-	else:
-		continue
+				llrc[m]=string
+	return llrc
 
-def maketime(start ,end):
-	if start == 0:
-		ss = '00:00:00,000'
-	else:
-		ss = "00:"+start[1:-1].replace('.',',')#+"0"
-	se = "00:"+end[1:-1].replace('.',',')#+"0"
-	return ss + " --> " + se
+def tran2srt(result):
+	lsrt=[]
+	times=sorted(result.keys())
+	for ind in range(0,len(times)):
+		i1=str(ind+1)+"\n"
+		end=times[ind+1] if ind<len(times)-1 else times[ind]
+		t2=times[ind]+" --> "+ end+"\n"
+		s3=result[times[ind]]
+		lsrt.append(i1+t2+s3)
+	return "\n".join(lsrt)
 
-times.sort()
-with open(sys.argv[1].replace("lrc","srt"), 'w') as f2:
-
-	pretime = times[0]
-	for ind in range(1,len(times)+1):
-		f2.write(str(ind)+"\n")
-		# 用于处理最后一条歌词信息
-		if ind==len(times):
-			f2.write(maketime(pretime, pretime)+"\n")
-		else:
-			f2.write(maketime(pretime, times[ind])+"\n")
-			pretime = times[ind]
-
+if __name__=="__main__":
+	try:
+		with open(sys.argv[1], 'r') as f:
+			srt=tran2srt(readlrc(f))
+		with open(sys.argv[1].replace("lrc","srt"),"w") as f:
+			f.write(srt)
+		print("Finished")
+	except:
+		print("Error")
+'''
+with open("/Users/gyr/Desktop/1.lrc", 'r') as f:
+		srt=tran2srt(readlrc(f))
+with open("/Users/gyr/Desktop/1.lrc".replace("lrc","srt"),"w") as f:
+		f.write(srt)
+print("dsd")
+'''
