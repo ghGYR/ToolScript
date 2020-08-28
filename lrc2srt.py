@@ -1,8 +1,4 @@
 #coding=utf-8
-'''
-假设lrc歌词文件中，翻译与原文都是在同一个时刻上（应该都是吧
-author: Tmn07
-'''
 import re
 import sys
 try:
@@ -14,7 +10,6 @@ data = f.read()
 result = {}
 times = []
 for line in data.split('\n'):
-	# 00:09.36
 	match_list = re.findall('\[\d*?:\d*?\.\d*?]', line)
 	if match_list:
 		for m in match_list:
@@ -42,7 +37,6 @@ times.sort()
 with open(sys.argv[1].replace("lrc","srt"), 'w') as f2:
 
 	pretime = times[0]
-	# for ind in range(1,len(times)):
 	for ind in range(1,len(times)+1):
 		f2.write(str(ind)+"\n")
 		# 用于处理最后一条歌词信息
