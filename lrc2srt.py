@@ -40,9 +40,3 @@ if __name__=="__main__":
 	except:
 		print("Error")
 '''
-with open("/Users/gyr/Desktop/1.lrc", 'r') as f:
-		srt=tran2srt(readlrc(f))
-with open("/Users/gyr/Desktop/1.lrc".replace("lrc","srt"),"w") as f:
-		f.write(srt)
-print("dsd")
-'''
